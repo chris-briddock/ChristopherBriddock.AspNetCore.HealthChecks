@@ -29,7 +29,7 @@ jobs:
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: ChristopherBriddock.Crpytography
+        name: ChristopherBriddock.AspNetCore.HealthChecks
         path: src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/net7.0/publish
         if-no-files-found: error
     - name: NuGet push
