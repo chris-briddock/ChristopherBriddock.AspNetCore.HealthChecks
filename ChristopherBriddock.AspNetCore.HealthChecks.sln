@@ -2,7 +2,7 @@
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChristopherBriddock.AspNetCore.HealthChecks", "ChristopherBriddock.AspNetCore.HealthChecks\ChristopherBriddock.AspNetCore.HealthChecks.csproj", "{DB2DBE5F-5356-4F51-90A7-88B96D4F12DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChristopherBriddock.AspNetCore.HealthChecks", "src\ChristopherBriddock.AspNetCore.HealthChecks\ChristopherBriddock.AspNetCore.HealthChecks.csproj", "{DB2DBE5F-5356-4F51-90A7-88B96D4F12DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
