@@ -21,7 +21,7 @@ jobs:
       with:
         dotnet-version: 7.0.x
     - name: Build & Restore
-      run: dotnet build --configuration Release src/ChristopherBriddock.AspNetCore.HealthChecks.sln -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
+      run: dotnet build --configuration Release ChristopherBriddock.AspNetCore.HealthChecks.sln -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
     - name: Publish
       run: dotnet publish src/ChristopherBriddock.AspNetCore.HealthChecks/ChristopherBriddock.AspNetCore.HealthChecks.csproj -c Release -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
     - name: Create the package
