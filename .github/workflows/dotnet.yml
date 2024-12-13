@@ -15,11 +15,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8.0.x
+        dotnet-version: 9.0.x
     - name: Build & Restore
       run: dotnet build --configuration Release ChristopherBriddock.AspNetCore.HealthChecks.sln -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
     - name: Publish
@@ -27,10 +27,10 @@ jobs:
     - name: Create the package
       run: dotnet pack --configuration Release src/ChristopherBriddock.AspNetCore.HealthChecks/ChristopherBriddock.AspNetCore.HealthChecks.csproj -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
     - name: Upload a Build Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ChristopherBriddock.AspNetCore.HealthChecks
-        path: src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/net8.0/publish
+        path: src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/net9.0/publish
         if-no-files-found: error
     - name: NuGet push
       run: dotnet nuget push "src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/*.nupkg" -k ${{secrets.NUGET_API_KEY}} -s https://api.nuget.org/v3/index.json --skip-duplicate
