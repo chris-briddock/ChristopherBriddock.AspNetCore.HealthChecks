@@ -9,13 +9,13 @@ namespace ChristopherBriddock.AspNetCore.HealthChecks;
 
 public static class HealthCheckExtensions
 {
-   /// <summary>
-   /// Maps a custom health check endpoint to the specified route.
-   /// </summary>
-   /// <param name="app">The <see cref="IEndpointRouteBuilder"/> to which the health check mapping is added.</param>
-   /// <returns>The <see cref="IEndpointRouteBuilder"/> for further configuration.</returns>
-   public static IEndpointRouteBuilder UseCustomHealthCheckMapping(this IEndpointRouteBuilder app)
-   {
+    /// <summary>
+    /// Maps a custom health check endpoint to the specified route.
+    /// </summary>
+    /// <param name="app">The <see cref="IEndpointRouteBuilder"/> to which the health check mapping is added.</param>
+    /// <returns>The <see cref="IEndpointRouteBuilder"/> for further configuration.</returns>
+    public static IEndpointRouteBuilder UseCustomHealthCheckMapping(this IEndpointRouteBuilder app)
+    {
         app.MapHealthChecks("/health", new HealthCheckOptions
         {
             ResultStatusCodes =
@@ -30,7 +30,7 @@ public static class HealthCheckExtensions
 
         return app;
     }
-   
+
     /// <summary>
     /// Adds database health checks to the <see cref="IServiceCollection"/>.
     /// </summary>
@@ -53,72 +53,16 @@ public static class HealthCheckExtensions
     }
 
     /// <summary>
-    /// Adds mongo health checks to the <see cref="IServiceCollection"/>.
-    /// </summary>
-    /// <param name="services">The <see cref="IServiceCollection"/> to which health checks will be added.</param>
-    /// <param name="elasticSearchUri">The connection string used to connect to the mongo database</param>
-    /// <returns>The modified <see cref="IServiceCollection"/> instance.</returns> 
-    public static IServiceCollection AddMongoDatabaseHealthChecks(this IServiceCollection services, string connectionString) 
-    {
-        ArgumentNullException.ThrowIfNull(services, nameof(services));
-
-        services.AddHealthChecks().AddMongoDb(connectionString,
-                                              null,
-                                              HealthStatus.Unhealthy,
-                                              null,
-                                              TimeSpan.FromMinutes(10));
-
-        return services;
-    }
-    /// <summary>
-    /// Adds database health checks to the <see cref="IServiceCollection"/>.
-    /// </summary>
-    /// <param name="services">The <see cref="IServiceCollection"/> to which health checks will be added.</param>
-    /// <param name="elasticSearchUri">The URI used to connect to ElasticSearch</param>
-    /// <returns>The modified <see cref="IServiceCollection"/> instance.</returns>    
-    public static IServiceCollection AddElasticSearchHealthChecks(this IServiceCollection services,
-                                                                  string elasticSearchUri) 
-    {
-        ArgumentNullException.ThrowIfNull(services, nameof(services));
-
-        services.AddHealthChecks()
-                .AddElasticsearch(elasticSearchUri,
-                                  null,
-                                  HealthStatus.Unhealthy,
-                                  null,
-                                  TimeSpan.FromMinutes(10));
-        
-        return services;
-    }
-
-    /// <summary>
     /// Adds redis health checks to the <see cref="IServiceCollection"/>.
     /// </summary>
     /// <param name="services"></param>
     /// <param name="connectionString"></param>
     /// <returns>The modified <see cref="IServiceCollection"/> instance.</returns>
-    public static IServiceCollection AddRedisHealthChecks(this IServiceCollection services, string connectionString ) 
+    public static IServiceCollection AddRedisHealthChecks(this IServiceCollection services, string connectionString)
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
 
         services.AddHealthChecks().AddRedis(connectionString, null, HealthStatus.Unhealthy, null, TimeSpan.FromMinutes(10));
-        return services;
-    }
-
-    /// <summary>
-    /// Adds RabbitMQ health checks to the <see cref="IServiceCollection"/>.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="connectionString"></param>
-    /// <returns>The modified <see cref="IServiceCollection"/> instance.</returns>
-    public static IServiceCollection AddRabbitMQHealthChecks(this IServiceCollection services) 
-    {
-        ArgumentNullException.ThrowIfNull(services, nameof(services));
-
-        services.AddHealthChecks().AddRabbitMQ(null,
-                                               HealthStatus.Unhealthy,
-                                               null,
-                                               TimeSpan.FromMinutes(10));
         return services;
     }
 
