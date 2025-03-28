@@ -1,6 +1,3 @@
-# This workflow will build a .NET project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
-
 name: .NET
 
 on:
@@ -16,21 +13,33 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: Build & Restore
+
+    - name: Add GitHub NuGet Source
+      run: dotnet nuget add source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --name github --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
+
+    - name: Restore dependencies
+      run: dotnet restore ChristopherBriddock.AspNetCore.HealthChecks.sln
+
+    - name: Build
       run: dotnet build --configuration Release ChristopherBriddock.AspNetCore.HealthChecks.sln -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
+
     - name: Publish
       run: dotnet publish src/ChristopherBriddock.AspNetCore.HealthChecks/ChristopherBriddock.AspNetCore.HealthChecks.csproj -c Release -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
+
     - name: Create the package
       run: dotnet pack --configuration Release src/ChristopherBriddock.AspNetCore.HealthChecks/ChristopherBriddock.AspNetCore.HealthChecks.csproj -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
-    - name: Upload a Build Artifact
+
+    - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
       with:
         name: ChristopherBriddock.AspNetCore.HealthChecks
         path: src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/net9.0/publish
         if-no-files-found: error
-    - name: NuGet push
-      run: dotnet nuget push "src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/*.nupkg" -k ${{secrets.NUGET_API_KEY}} -s https://api.nuget.org/v3/index.json --skip-duplicate
+
+    - name: Push NuGet Package to GitHub Packages
+      run: dotnet nuget push "src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
