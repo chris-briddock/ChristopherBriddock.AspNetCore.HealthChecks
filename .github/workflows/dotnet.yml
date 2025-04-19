@@ -43,3 +43,13 @@ jobs:
 
     - name: Push NuGet Package to GitHub Packages
       run: dotnet nuget push "src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source "github" --skip-duplicate
+
+    - name: Create Git Tag
+      if: success() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "actions@github.com"
+        chmod +x ./create-tag.sh
+        ./create-tag.sh "v${{ secrets.RELEASE_VERSION }}"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
