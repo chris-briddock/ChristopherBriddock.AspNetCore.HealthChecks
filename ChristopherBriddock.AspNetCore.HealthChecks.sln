@@ -1,8 +1,9 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChristopherBriddock.AspNetCore.HealthChecks", "src\ChristopherBriddock.AspNetCore.HealthChecks\ChristopherBriddock.AspNetCore.HealthChecks.csproj", "{DB2DBE5F-5356-4F51-90A7-88B96D4F12DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChristopherBriddock.AspNetCore.HealthChecks", "src\ChristopherBriddock.AspNetCore.HealthChecks\ChristopherBriddock.AspNetCore.HealthChecks.csproj", "{52B2F862-2CDE-8528-8F1F-A55D54ADE531}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DB2DBE5F-5356-4F51-90A7-88B96D4F12DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB2DBE5F-5356-4F51-90A7-88B96D4F12DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB2DBE5F-5356-4F51-90A7-88B96D4F12DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB2DBE5F-5356-4F51-90A7-88B96D4F12DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52B2F862-2CDE-8528-8F1F-A55D54ADE531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52B2F862-2CDE-8528-8F1F-A55D54ADE531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52B2F862-2CDE-8528-8F1F-A55D54ADE531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52B2F862-2CDE-8528-8F1F-A55D54ADE531}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

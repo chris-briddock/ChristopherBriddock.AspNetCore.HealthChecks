@@ -16,36 +16,44 @@ public static class HealthCheckResponseWriter
         using var memoryStream = new MemoryStream();
         using (var jsonWriter = new Utf8JsonWriter(memoryStream, options))
         {
-            jsonWriter.WriteStartObject();
-            jsonWriter.WriteString("status", healthReport.Status.ToString());
-            jsonWriter.WriteStartObject("results");
-
-            foreach (var healthReportEntry in healthReport.Entries)
-            {
-                jsonWriter.WriteStartObject(healthReportEntry.Key);
-                jsonWriter.WriteString("status",
-                    healthReportEntry.Value.Status.ToString());
-                jsonWriter.WriteString("description",
-                    healthReportEntry.Value.Description);
-                jsonWriter.WriteStartObject("data");
-
-                foreach (var item in healthReportEntry.Value.Data)
-                {
-                    jsonWriter.WritePropertyName(item.Key);
-
-                    JsonSerializer.Serialize(jsonWriter, item.Value,
-                        item.Value?.GetType() ?? typeof(object));
-                }
-
-                jsonWriter.WriteEndObject();
-                jsonWriter.WriteEndObject();
-            }
-
-            jsonWriter.WriteEndObject();
-            jsonWriter.WriteEndObject();
+            WriteHealthReport(jsonWriter, healthReport);
         }
 
-        await context.Response.WriteAsync(
-           Encoding.UTF8.GetString(memoryStream.ToArray()));
+        memoryStream.Seek(0, SeekOrigin.Begin);
+        using var reader = new StreamReader(memoryStream, Encoding.UTF8);
+        var json = await reader.ReadToEndAsync();
+        await context.Response.WriteAsync(json);
+    }
+
+    private static void WriteHealthReport(Utf8JsonWriter writer, HealthReport report)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("status", report.Status.ToString());
+        writer.WriteStartObject("results");
+
+        foreach (var entry in report.Entries)
+        {
+            WriteHealthReportEntry(writer, entry.Key, entry.Value);
+        }
+
+        writer.WriteEndObject();
+        writer.WriteEndObject();
+    }
+
+    private static void WriteHealthReportEntry(Utf8JsonWriter writer, string key, HealthReportEntry entry)
+    {
+        writer.WriteStartObject(key);
+        writer.WriteString("status", entry.Status.ToString());
+        writer.WriteString("description", entry.Description);
+        writer.WriteStartObject("data");
+
+        foreach (var item in entry.Data)
+        {
+            writer.WritePropertyName(item.Key);
+            JsonSerializer.Serialize(writer, item.Value, item.Value?.GetType() ?? typeof(object));
+        }
+
+        writer.WriteEndObject();
+        writer.WriteEndObject();
     }
 }
