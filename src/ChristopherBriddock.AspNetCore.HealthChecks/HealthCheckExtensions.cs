@@ -10,24 +10,66 @@ namespace ChristopherBriddock.AspNetCore.HealthChecks;
 
 public static class HealthCheckExtensions
 {
+
+    private const string HealthEndpointPath = "/health";
+
+    private const string ReadinessEndpointPath = "/ready";
+    private const string AlivenessEndpointPath = "/alive";
     /// <summary>
-    /// Maps a custom health check endpoint to the specified route.
+    /// Maps custom health check endpoints.
     /// </summary>
     /// <param name="app">The <see cref="IEndpointRouteBuilder"/> to which the health check mapping is added.</param>
     /// <returns>The <see cref="IEndpointRouteBuilder"/> for further configuration.</returns>
-    public static IEndpointRouteBuilder UseCustomHealthCheckMapping(this IEndpointRouteBuilder app)
+    public static IEndpointRouteBuilder MapHealthCheckEndpoints(this IEndpointRouteBuilder app)
     {
-        app.MapHealthChecks("/health", new HealthCheckOptions
+        // Ensure that the app parameter is not null
+        ArgumentNullException.ThrowIfNull(app, nameof(app));
+
+        // Configure health check options with detailed responses
+        var healthCheckOptions = new HealthCheckOptions
         {
+            ResponseWriter = HealthCheckResponseWriter.WriteResponse,
             ResultStatusCodes =
-           {
+            {
                 [HealthStatus.Healthy] = StatusCodes.Status200OK,
                 [HealthStatus.Degraded] = StatusCodes.Status200OK,
-                [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable,
-           },
+                [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+            }
+        };
+
+        var readinessCheckOptions = new HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("ready"),
             ResponseWriter = HealthCheckResponseWriter.WriteResponse,
-            AllowCachingResponses = true
-        });
+            ResultStatusCodes =
+            {
+                [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+            }
+        };
+
+        var livenessCheckOptions = new HealthCheckOptions
+        {
+            Predicate = check => check.Tags.Contains("live"),
+            ResponseWriter = HealthCheckResponseWriter.WriteResponse,
+            ResultStatusCodes =
+            {
+                [HealthStatus.Healthy] = StatusCodes.Status200OK,
+                [HealthStatus.Degraded] = StatusCodes.Status200OK,
+                [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+            }
+        };
+
+        // Map health check endpoints
+        // All health checks must pass for app to be considered ready to accept traffic after starting
+        app.MapHealthChecks(HealthEndpointPath, healthCheckOptions);
+
+        // Only readiness checks (infrastructure dependencies) must pass for app to be considered ready
+        app.MapHealthChecks(ReadinessEndpointPath, readinessCheckOptions);
+
+        // Only liveness checks must pass for app to be considered alive
+        app.MapHealthChecks(AlivenessEndpointPath, livenessCheckOptions);
 
         return app;
     }
@@ -94,7 +136,7 @@ public static class HealthCheckExtensions
     {
         ArgumentNullException.ThrowIfNull(services, nameof(services));
         ArgumentNullException.ThrowIfNull(connectionString, nameof(connectionString));
-        
+
         services.AddHealthChecks()
                 .AddMongoDb(
                     clientFactory: sp => new MongoClient(connectionString),
@@ -102,7 +144,35 @@ public static class HealthCheckExtensions
                     failureStatus: HealthStatus.Unhealthy,
                     tags: tags,
                     timeout: TimeSpan.FromMinutes(1));
-            
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds PostgreSQL health checks to the <see cref="IServiceCollection"/>.
+    /// </summary>
+    /// <param name="services">The <see cref="IServiceCollection"/> to which health checks will be added.</param>
+    /// <param name="connectionString">The connection string used to connect to the PostgreSQL database.</param>
+    /// <param name="name">The name of the health check.</param>
+    /// <param name="tags">The tags to apply to the health check.</param>
+    /// <returns>The modified <see cref="IServiceCollection"/> instance.</returns>
+    public static IServiceCollection AddPostgresHealthCheck(this IServiceCollection services,
+                                                            string connectionString,
+                                                            string? name = null,
+                                                            IEnumerable<string>? tags = null)
+    {
+        ArgumentNullException.ThrowIfNull(services, nameof(services));
+        ArgumentNullException.ThrowIfNull(connectionString, nameof(connectionString));
+
+        services.AddHealthChecks()
+                .AddNpgSql(connectionString: connectionString,
+                          healthQuery: "SELECT 1;",
+                          configure: null,
+                          name: name,
+                          failureStatus: HealthStatus.Unhealthy,
+                          tags: tags,
+                          timeout: TimeSpan.FromMinutes(1));
+
         return services;
     }
 

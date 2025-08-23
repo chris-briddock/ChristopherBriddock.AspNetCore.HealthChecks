@@ -7,7 +7,8 @@ namespace ChristopherBriddock.AspNetCore.HealthChecks;
 
 public static class HealthCheckResponseWriter
 {
-    internal static async Task WriteResponse(HttpContext context, HealthReport healthReport)
+    internal static async Task WriteResponse(HttpContext context,
+                                             HealthReport healthReport)
     {
         context.Response.ContentType = "application/json; charset=utf-8";
 
@@ -25,7 +26,8 @@ public static class HealthCheckResponseWriter
         await context.Response.WriteAsync(json);
     }
 
-    private static void WriteHealthReport(Utf8JsonWriter writer, HealthReport report)
+    private static void WriteHealthReport(Utf8JsonWriter writer,
+                                          HealthReport report)
     {
         writer.WriteStartObject();
         writer.WriteString("status", report.Status.ToString());
