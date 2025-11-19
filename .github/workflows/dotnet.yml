@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ChristopherBriddock.AspNetCore.HealthChecks
-        path: src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/net9.0/publish
+        path: src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/net10.0/publish
         if-no-files-found: error
 
     - name: Push NuGet Package to GitHub Packages
