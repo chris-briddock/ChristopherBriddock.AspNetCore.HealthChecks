@@ -7,6 +7,13 @@ print_message() {
     echo -e "${GREEN}$1${NC}"
 }
 
+# Function to print warning message
+print_warning() {
+    YELLOW='\033[1;33m'
+    NC='\033[0m' # No Color
+    echo -e "${YELLOW}Warning: $1${NC}"
+}
+
 # Function to print error message and exit
 print_error() {
     RED='\033[0;31m'
@@ -40,9 +47,16 @@ git checkout main || print_error "Failed to switch to main branch"
 print_message "Pulling latest changes..."
 git pull origin main || print_error "Failed to pull latest changes"
 
-# Check if tag already exists
+# Fetch all tags from remote
+print_message "Fetching tags..."
+git fetch --tags
+
+# Check if tag already exists (locally or remotely)
 if git rev-parse "$VERSION" >/dev/null 2>&1; then
-    print_error "Tag $VERSION already exists"
+    print_warning "Tag $VERSION already exists. Skipping tag creation."
+    REPO_URL=$(git remote get-url origin | sed 's/\.git$//')
+    print_message "You can view it at: $REPO_URL/releases/tag/$VERSION"
+    exit 0
 fi
 
 # Create and push tag
