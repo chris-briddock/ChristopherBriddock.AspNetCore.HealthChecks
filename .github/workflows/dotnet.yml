@@ -32,6 +32,17 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release ChristopherBriddock.AspNetCore.HealthChecks.sln -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
 
+    - name: Debug token presence
+      if: github.ref == 'refs/heads/main'
+      env:
+        NUGET_AUTH_TOKEN: ${{ github.token }}
+      run: |
+        if [ -z "$NUGET_AUTH_TOKEN" ]; then
+          echo "NUGET_AUTH_TOKEN is EMPTY"
+          exit 1
+        fi
+        echo "NUGET_AUTH_TOKEN is set (length: ${#NUGET_AUTH_TOKEN})"
+
     - name: Publish
       run: dotnet publish src/ChristopherBriddock.AspNetCore.HealthChecks/ChristopherBriddock.AspNetCore.HealthChecks.csproj -c Release -p:PackageVersion=${{ secrets.RELEASE_VERSION }}
 
@@ -48,7 +59,7 @@ jobs:
     - name: Push NuGet Package to GitHub Packages
       if: github.ref == 'refs/heads/main'
       env:
-        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ github.token }}
       run: dotnet nuget push "src/ChristopherBriddock.AspNetCore.HealthChecks/bin/Release/*.nupkg" --api-key "$NUGET_AUTH_TOKEN" --source "https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json" --skip-duplicate
 
     - name: Create Git Tag
