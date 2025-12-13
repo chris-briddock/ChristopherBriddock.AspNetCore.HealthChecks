@@ -27,7 +27,7 @@ jobs:
         dotnet-version: 10.0.x
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
       env:
-        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        NUGET_AUTH_TOKEN: ${{ github.token }}
 
     - name: Restore dependencies
       run: dotnet restore ChristopherBriddock.AspNetCore.HealthChecks.sln
@@ -62,4 +62,4 @@ jobs:
         chmod +x ./create-tag.sh
         ./create-tag.sh "v${{ secrets.RELEASE_VERSION }}"
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ github.token }}
