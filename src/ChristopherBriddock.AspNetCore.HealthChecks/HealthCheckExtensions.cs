@@ -12,9 +12,8 @@ public static class HealthCheckExtensions
 {
 
     private const string HealthEndpointPath = "/health";
-
-    private const string ReadinessEndpointPath = "/ready";
-    private const string AlivenessEndpointPath = "/alive";
+    private const string ReadinessEndpointPath = "/health/ready";
+    private const string AlivenessEndpointPath = "/health/alive";
     /// <summary>
     /// Maps custom health check endpoints.
     /// </summary>
